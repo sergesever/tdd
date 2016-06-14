@@ -1,6 +1,8 @@
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 import unittest
+### pdb
+import pdb
 
 
 class NewVisitorTest(unittest.TestCase):
@@ -31,11 +33,14 @@ class NewVisitorTest(unittest.TestCase):
         inputbox.send_keys('Buy peacock feathers')
 
         # update page, with to-do item in the list
-        inputbox.send_keys(Keys.enter)
+### pdb
+#        pdb.set_trace()
+        inputbox.send_keys(Keys.ENTER)
         table = self.browser.find_element_by_id('id_list_table')
         rows = table.find_elements_by_tag_name('tr')
         self.assertTrue(
-            any(row.text == '1: Buy peacock feathers' for row in rows)
+            any(row.text == '1: Buy peacock feathers' for row in rows),
+            'New item did not appear in table'
         )
 
         # add 'another' to-do item
