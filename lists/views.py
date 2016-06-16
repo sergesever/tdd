@@ -1,18 +1,11 @@
 from django.shortcuts import redirect, render
 # from django.http import HttpResponse
 from lists.models import Item
+# import pdb
 
 
 def home_page(request):
-    if request.method == 'POST':
-        # new_item_text = request.POST['item_text']
-        Item.objects.create(text=request.POST['item_text'])
-        return redirect('/lists/test_list/')
     return render(request, 'home.html')
-
-    # item = Item()
-    # item.text = request.POST.get('item_text', '')
-    # item.save()
 
 
 def view_list(request):
@@ -22,3 +15,9 @@ def view_list(request):
         'list.html',
         {'items': items},
     )
+
+
+def new_list(request):
+    Item.objects.create(text=request.POST['item_text'])
+    # pdb.set_trace()
+    return redirect('/lists/test_list/')

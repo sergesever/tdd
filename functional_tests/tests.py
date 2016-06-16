@@ -81,7 +81,7 @@ class NewVisitorTest(LiveServerTestCase):
 
         # Francis gets his own url
         francis_list_url = self.browser.current_url
-        pdb.set_trace()
+        # pdb.set_trace()
         self.assertRegex(francis_list_url, '/lists/.+')
         self.assertNotEqual(francis_list_url, edith_list_url)
 

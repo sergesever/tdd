@@ -5,7 +5,7 @@ from django.template.loader import render_to_string
 
 from lists.views import home_page
 from lists.models import Item
-# debug
+
 # import pdb
 
 
@@ -26,32 +26,6 @@ class HomePageTest(TestCase):
         # self.assertTrue(response.content.strip().endswith(b'</html>'))
         expected_html = render_to_string('home.html')
         self.assertEqual(response.content.decode(), expected_html)
-
-    def test_home_page_can_save_POST_requst(self):
-        request = HttpRequest()
-        request.method = 'POST'
-        request.POST['item_text'] = 'A new list item'
-
-        # response = home_page(request)
-        home_page(request)
-
-        self.assertEqual(Item.objects.count(), 1)
-        new_item = Item.objects.first()
-        self.assertEqual(new_item.text, 'A new list item')
-
-    def test_home_page_redirects_after_POST(self):
-        request = HttpRequest()
-        request.method = 'POST'
-        request.POST['item_text'] = 'A new list item'
-
-        response = home_page(request)
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(response['location'], '/lists/test_list/')
-
-    def test_home_page_only_save_items_when_necessary(self):
-        request = HttpRequest()
-        home_page(request)
-        self.assertEqual(Item.objects.count(), 0)
 
 
 class ItemModelTest(TestCase):
@@ -86,3 +60,24 @@ class ListViewTest(TestCase):
 
         self.assertContains(response, 'itemey 1')
         self.assertContains(response, 'itemey 2')
+
+
+class NewListTest(TestCase):
+    def test1_saving_POST_request(self):
+        self.client.post(
+            '/lists/new',
+            data={'item_text': 'A new list item'},
+            )
+        # pdb.set_trace()
+        self.assertEqual(Item.objects.count(), 1)
+        new_item = Item.objects.first()
+        self.assertEqual(new_item.text, 'A new list item')
+
+    def test2_redirects_after_POST(self):
+        response = self.client.post(
+            '/lists/new',
+            data={'item_text': 'A new list item'}
+            )
+        # self.assertEqual(response.status_code, 302)
+        # self.assertEqual(response['location'], '/lists/test_list/')
+        self.assertRedirects(response, '/lists/test_list/')
