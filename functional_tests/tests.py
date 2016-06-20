@@ -1,4 +1,5 @@
-from django.test import LiveServerTestCase
+# from django.test import LiveServerTestCase
+from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 # import unittest
@@ -7,12 +8,13 @@ from selenium.webdriver.common.keys import Keys
 # import time
 
 
-class NewVisitorTest(LiveServerTestCase):
+class NewVisitorTest(StaticLiveServerTestCase):
     def setUp(self):
         self.browser = webdriver.Firefox()
         self.browser.implicitly_wait(3)
 
     def tearDown(self):
+        self.browser.refresh()
         self.browser.quit()
 
     def check_for_row_in_list_table(self, row_text):
@@ -104,6 +106,7 @@ class NewVisitorTest(LiveServerTestCase):
 
         # check if the input box is centered
         inputbox = self.browser.find_element_by_id('id_new_item')
+        # pdb.set_trace()
         self.assertAlmostEqual(
             inputbox.location['x'] + inputbox.size['width'] / 2,
             512,
@@ -112,6 +115,7 @@ class NewVisitorTest(LiveServerTestCase):
 
         # start a new list check if it is centered
         inputbox.send_keys('testing\n')
+        # pdb.set_trace()
         inputbox = self.browser.find_element_by_id('id_new_item')
         self.assertAlmostEqual(
             inputbox.location['x'] + inputbox.size['width'] / 2,
