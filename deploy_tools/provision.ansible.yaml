@@ -1,0 +1,50 @@
+---
+
+- hosts: all
+  user: sever
+  sudo: yes
+
+  tasks: 
+    - name: make sure all required packages are installed
+      apt: pkg=nginx,git,python3,python3-pip state=present
+    - name: makesure virtualenv is installed
+      command: pip3 install virtualenv
+
+    - name: allow long hostnames in nginx
+      lineinfile: 
+        dest=/etc/nginx/nginx.conf
+        regexp='(\s+)#? ?server_names_hash_bucket_size'
+        backrefs=yes
+        line='\1server_names_hash_bucket_size 64;'
+
+    - name: add nginx config to sites-avalable
+      template: src=./nginx.conf.j2
+                dest=/etc/nginx/sites-available/{{ inventory_hostname }}
+      notify: restart nginx
+
+    - name: add symlinks in nginx sites-enabled
+      file: src=/etc/nginx/sites-available/{{ inventory_hostname }}
+            dest=/etc/nginx/sites-enabled/{{ inventory_hostname }} state=link
+      notify: restart nginx
+
+    - name: write gunicorn init script
+      template: src=./gunicorn-upstart.conf.j2
+                dest=/etc/init/gunicorn-{{ inventory_hostname }}.conf    
+      notify: restart gunicorn
+
+    - name: make sure nginx is running
+      service: name=nginx state=running
+
+    - name: make sure gunicorn is running
+      service: name=gunicorn-{{ inventory_hostname }} state=running
+
+  handlers:
+  - name: restart nginx
+    service: name=nginx state=restarted
+        
+        
+  - name: restart gunicorn
+    service: name=gunicorn-{{ inventory_hostname }} state=restarted
+
+
+

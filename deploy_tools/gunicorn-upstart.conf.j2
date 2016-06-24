@@ -1,0 +1,13 @@
+description "Gunicorn server for {{ inventory_hostname }}"
+
+start on net-device-up
+stop on shutdown
+
+respawn
+
+chdir /home/sever/sites/{{ inventory_hostname }}/source
+exec ../virtualenv/bin/gunicorn \
+    --bind unix:/tmp/{{ inventory_hostname }}.socket \
+    --access-logfile ../access.log \
+    --error-logfile ../error.log \
+    superlists.wsgi:application
