@@ -6,8 +6,6 @@ from django.template.loader import render_to_string
 from lists.views import home_page
 from lists.models import Item, List
 
-# import pdb
-
 
 class HomePageTest(TestCase):
     def test_root_url_resolves_to_home_page_view(self):
@@ -26,37 +24,6 @@ class HomePageTest(TestCase):
         # self.assertTrue(response.content.strip().endswith(b'</html>'))
         expected_html = render_to_string('home.html')
         self.assertEqual(response.content.decode(), expected_html)
-
-
-class ListAndItemModelTest(TestCase):
-    def test_saving_and_retrieving_items(self):
-        list_ = List()
-        list_.save()
-
-        first_item = Item()
-        first_item.text = 'The first list item'
-        first_item.list = list_
-        first_item.save()
-
-        second_item = Item()
-        second_item.text = 'The second list item'
-        second_item.list = list_
-        second_item.save()
-
-        saved_list = List.objects.first()
-        self.assertEqual(saved_list, list_)
-
-        saved_items = Item.objects.all()
-        self.assertEqual(saved_items.count(), 2)
-
-        first_saved_item = saved_items[0]
-        second_saved_item = saved_items[1]
-
-        self.assertEqual(first_saved_item.text, 'The first list item')
-        self.assertEqual(first_saved_item.list, list_)
-
-        self.assertEqual(second_saved_item.text, 'The second list item')
-        self.assertEqual(second_saved_item.list, list_)
 
 
 class ListViewTest(TestCase):
@@ -82,7 +49,7 @@ class ListViewTest(TestCase):
         self.assertNotContains(response, 'other itemey 2')
 
     def test_passes_correct_list_to_template(self):
-        other_list = List.objects.create()
+        # other_list = List.objects.create()
         correct_list = List.objects.create()
         response = self.client.get('/lists/%d/' % (correct_list.id,))
         self.assertEqual(response.context['list'], correct_list)
@@ -110,7 +77,7 @@ class NewListTest(TestCase):
         self.assertRedirects(response, '/lists/%d/' % (list_.id))
 
     def test_can_save_a_POST_request_to_an_existing_list(self):
-        other_list = List.objects.create()
+        # other_list = List.objects.create()
         correct_list = List.objects.create()
 
         self.client.post(
@@ -124,7 +91,7 @@ class NewListTest(TestCase):
         self.assertEqual(new_item.list, correct_list)
 
     def test_redirects_to_list_view(self):
-        other_list = List.objects.create()
+        # other_list = List.objects.create()
         correct_list = List.objects.create()
 
         response = self.client.post(
