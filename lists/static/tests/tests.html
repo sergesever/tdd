@@ -7,6 +7,10 @@
 </head>
 
 <body>
+<!-- dealing with strange fixture behaviour that does not allow setting events 
+            <input name='text' />
+            <div class='has-error'>Error text</div>
+-->
     <div id='qunit'></div>
     <div id='qunit-fixture'>
         <form>
@@ -19,16 +23,35 @@
     <script src='qunit.js'></script>
     <script src='../list.js?123'></script>
     
-    <script>
+    <script type='text/javascript'>
 /* global $, test, equal */
 
-QUnit.test('errors should be hidden on keypress', function(assert) {
-    $('input').trigger('keypress');
-    assert.equal($('.has-error').is(':visible'), false);
-});
+function setUpModule() {
+    $('input[name="text"]').on('keypress', function() {
+        $('.has-error').hide();
+        //console.log('event on');
+    });
+
+    $('input[name="text"]').on('click', function() {
+        $('.has-error').hide();
+        //console.log('event on');
+    });
+}
+
+QUnit.module('tests', {beforeEach:setUpModule});
 
 QUnit.test('errors not be hidden until there is a keypress', function(assert) {
     assert.equal($('.has-error').is(':visible'), true);
+});
+
+QUnit.test('errors should be hidden on keypress', function(assert) {
+    $('input[name="text"]').trigger('keypress');
+    assert.equal($('.has-error').is(':visible'), false);
+});
+
+QUnit.test('errors should be hidden on click', function(assert) {
+    $('input[name="text"]').trigger('click');
+    assert.equal($('.has-error').is(':visible'), false);
 });
     </script>
 
