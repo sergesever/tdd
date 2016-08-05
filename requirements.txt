@@ -1,3 +1,8 @@
 Django==1.8.4
 gunicorn==19.6.0
+idna==2.1
+pyasn1==0.1.9
+pycparser==2.14
+requests==2.10.0
 selenium==2.53.4
+six==1.10.0
